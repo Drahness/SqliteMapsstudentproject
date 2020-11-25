@@ -74,8 +74,10 @@ public class MainActivity extends MainMenu {
                             "\"user_ratings_total\": 49,\n" +
                             "\"vicinity\": \"Carrer de Sant Francesc d'Assís, 7, Carcaixent\"\n" +
                             "}");
+                    JSONToDBO jsonasda = new JSONToDBO(O,"Places", null);
+                    txt.setText(jsonasda.toSQL());
+                    System.out.println(jsonasda.toSQL());
 
-                    txt.setText(new JSONToDBO(O).toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

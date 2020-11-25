@@ -1,6 +1,7 @@
 package com.ieseljust.joanciscar.sqlitemapsstudentproject;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -9,41 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class DBController extends SQLiteOpenHelper {
-    /**
-     * Create a helper object to create, open, and/or manage a database.
-     * This method always returns very quickly.  The database is not actually
-     * created or opened until one of {@link #getWritableDatabase} or
-     * {@link #getReadableDatabase} is called.
-     *
-     * @param context to use for locating paths to the the database
-     * @param name    of the database file, or null for an in-memory database
-     * @param factory to use for creating cursor objects, or null for the default
-     * @param version number of the database (starting at 1); if the database is older,
-     *                {@link #onUpgrade} will be used to upgrade the database; if the database is
-     *                newer, {@link #onDowngrade} will be used to downgrade the database
-     */
-    public DBController(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
+    private static final String DATABASE_NAME = "Poblacions";
+    private static final int DATABASE_VERSION = 1;
 
-    /**
-     * Create a helper object to create, open, and/or manage a database.
-     * The database is not actually created or opened until one of
-     * {@link #getWritableDatabase} or {@link #getReadableDatabase} is called.
-     *
-     * <p>Accepts input param: a concrete instance of {@link DatabaseErrorHandler} to be
-     * used to handle corruption when sqlite reports database corruption.</p>
-     *
-     * @param context      to use for locating paths to the the database
-     * @param name         of the database file, or null for an in-memory database
-     * @param factory      to use for creating cursor objects, or null for the default
-     * @param version      number of the database (starting at 1); if the database is older,
-     *                     {@link #onUpgrade} will be used to upgrade the database; if the database is
-     *                     newer, {@link #onDowngrade} will be used to downgrade the database
-     * @param errorHandler the {@link DatabaseErrorHandler} to be used when sqlite reports database
-     */
-    public DBController(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version, @Nullable DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
+    public DBController(Context context) {
+        super (context, DATABASE_NAME, null,  DATABASE_VERSION);
     }
 
     /**
@@ -54,10 +25,36 @@ public class DBController extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE locations (" +
-                "INT place_id," +
-                "VARCHAR(255) photo_reference" +
-                "opening_hours)");
+        db.execSQL("CREATE TABLE Poblacion (" +
+                "INT codi PRIMARY KEY," +
+                "VARCHAR(30) nom NO NULL" +
+                "DOUBLE lat NO NULL," +
+                "DOUBLE lon NO NULL," +
+                "INT radius NO NULL)");
+        db.execSQL("INSERT INTO Poblacion VALUES (46712,'Piles',38.9408685,-0.1324241,1000)");
+        db.execSQL("INSERT INTO Poblacion VALUES (46711,'Miramar',38.9501877,-0.1405837,1000)");
+        db.execSQL("INSERT INTO Poblacion VALUES (46713,'Bellreguard',38.9466531,-0.1624822,2000)");
+        db.execSQL("INSERT INTO Poblacion VALUES (46715,'Alqueria de la comtessa',38.9367938,-0.1509766,1000)");
+        db.execSQL("INSERT INTO Poblacion VALUES (46702,'Gandia',38.96735,-0.1853385,5000)");
+        db.execSQL("INSERT INTO Poblacion VALUES (46701,'Grao Gandia',39.007931,-0.1679302,5000)");
+        db.execSQL("INSERT INTO Poblacion VALUES (46740,'Carcaixent',39.1214619,-0.4479085,2000)");
+        db.execSQL("CREATE TABLE Tipos (" +
+                "VARCHAR(20) googletype PRIMARY KEY," +
+                "VARCHAR(20) tipo NO NULL)");
+        db.execSQL("CREATE TABLE Sitio (" +
+                "INT codi NOT NULL" +
+                "VARCHAR(35) place_id PRIMARY KEY," +
+                "DOUBLE lat NO NULL," +
+                "DOUBLE lon NO NULL," +
+                "VARCHAR(80) calle NO NULL," +
+                "VARCHAR(20) tipo NO NULL" +
+                "BLOB foto)");
+        Cursor cursor = db.rawQuery("SELECT codi,lat,lon FROM Poblacion;",null);
+
+        cursor.
+
+
+
     }
 
     /**
