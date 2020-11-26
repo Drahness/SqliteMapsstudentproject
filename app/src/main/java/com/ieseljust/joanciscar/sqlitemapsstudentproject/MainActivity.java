@@ -1,14 +1,23 @@
 package com.ieseljust.joanciscar.sqlitemapsstudentproject;
 
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.JsonObject;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Poblacio;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.FetchPlacesOf;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.JSONToDBO;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends MainMenu {
 
@@ -20,67 +29,39 @@ public class MainActivity extends MainMenu {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PoblacioDAO pob = new PoblacioDAO(MainActivity.this);
                 try {
-                    JSONObject O = new JSONObject("{\n" +
-                            "\"business_status\": \"OPERATIONAL\",\n" +
-                            "\"geometry\": {\n" +
-                            "\"location\": {\n" +
-                            "\"lat\": 39.12111530000001,\n" +
-                            "\"lng\": -0.4487013999999999\n" +
-                            "},\n" +
-                            "\"viewport\": {\n" +
-                            "\"northeast\": {\n" +
-                            "\"lat\": 39.1224325302915,\n" +
-                            "\"lng\": -0.4473652197084979\n" +
-                            "},\n" +
-                            "\"southwest\": {\n" +
-                            "\"lat\": 39.1197345697085,\n" +
-                            "\"lng\": -0.450063180291502\n" +
-                            "}\n" +
-                            "}\n" +
-                            "},\n" +
-                            "\"icon\": \"https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/shopping-71.png\",\n" +
-                            "\"name\": \"Druni Perfumerías ®\",\n" +
-                            "\"opening_hours\": {\n" +
-                            "\"open_now\": false\n" +
-                            "},\n" +
-                            "\"photos\": [\n" +
-                            "{\n" +
-                            "\"height\": 500,\n" +
-                            "\"html_attributions\": [\n" +
-                            "\"\\u003ca href=\\\"https://maps.google.com/maps/contrib/113752162977887521274\\\"\\u003eDruni Perfumerías ®\\u003c/a\\u003e\"\n" +
-                            "],\n" +
-                            "\"photo_reference\": \"ATtYBwKAL6V9a9RfhAyP_V26ImnmxkLb2mKxn0JnHTq40NtZTc2IcwvgLj50sIv8OQqD-K4_S5eBtOdhR1AKLyjgfpuoF_g5QChzw8yT9Lc5MZAV-JzF4WXGseY2rxg5DZBB-8FaoWPWnOB27Epd580DGaBYXNXIGLh-6Q6bKmjbdyysTVnM\",\n" +
-                            "\"width\": 500\n" +
-                            "}\n" +
-                            "],\n" +
-                            "\"place_id\": \"ChIJ-71Pk9K6YQ0R33mEzmAJ4LI\",\n" +
-                            "\"plus_code\": {\n" +
-                            "\"compound_code\": \"4HC2+CG Carcaixent, Spain\",\n" +
-                            "\"global_code\": \"8CFX4HC2+CG\"\n" +
-                            "},\n" +
-                            "\"rating\": 4.3,\n" +
-                            "\"reference\": \"ChIJ-71Pk9K6YQ0R33mEzmAJ4LI\",\n" +
-                            "\"scope\": \"GOOGLE\",\n" +
-                            "\"types\": [\n" +
-                            "\"pharmacy\",\n" +
-                            "\"gym\",\n" +
-                            "\"health\",\n" +
-                            "\"point_of_interest\",\n" +
-                            "\"clothing_store\",\n" +
-                            "\"store\",\n" +
-                            "\"establishment\"\n" +
-                            "],\n" +
-                            "\"user_ratings_total\": 49,\n" +
-                            "\"vicinity\": \"Carrer de Sant Francesc d'Assís, 7, Carcaixent\"\n" +
-                            "}");
-                    JSONToDBO jsonasda = new JSONToDBO(O,"Places", null);
-                    txt.setText(jsonasda.toSQL());
-                    System.out.println(jsonasda.toSQL());
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    pob.insert(new Poblacio(46712, "Piles", 38.9408685, -0.1324241, 1000));
+                    pob.insert(new Poblacio(46711, "Miramar", 38.9501877, -0.1405837, 1000));
+                    pob.insert(new Poblacio(46713, "Bellreguard", 38.9466531, -0.1624822, 2000));
+                    pob.insert(new Poblacio(46715, "Alqueria de la comtessa", 38.9367938, -0.1509766, 1000));
+                    pob.insert(new Poblacio(46702, "Gandia", 38.96735, -0.1853385, 5000));
+                    pob.insert(new Poblacio(46701, "Grao Gandia", 39.007931, -0.1679302, 5000));
+                    pob.insert(new Poblacio(46740, "Carcaixent", 39.1214619, -0.4479085, 2000));
+                } catch(SQLiteConstraintException ex) {
+                    pob.delete(46712);
+                    pob.delete(46711);
+                    pob.delete(46713);
+                    pob.delete(46715);
+                    pob.delete(46702);
+                    pob.delete(46701);
+                    pob.delete(46740);
+                    pob.insert(new Poblacio(46712, "Piles", 38.9408685, -0.1324241, 1000));
+                    pob.insert(new Poblacio(46711, "Miramar", 38.9501877, -0.1405837, 1000));
+                    pob.insert(new Poblacio(46713, "Bellreguard", 38.9466531, -0.1624822, 2000));
+                    pob.insert(new Poblacio(46715, "Alqueria de la comtessa", 38.9367938, -0.1509766, 1000));
+                    pob.insert(new Poblacio(46702, "Gandia", 38.96735, -0.1853385, 2000));
+                    pob.insert(new Poblacio(46701, "Grao Gandia", 39.007931, -0.1679302, 2500));
+                    pob.insert(new Poblacio(46740, "Carcaixent", 39.1214619, -0.4479085, 2000));
                 }
+                List<Poblacio> poblacions = pob.get();
+                List<JSONObject> listOfObj = new ArrayList<>();
+                FetchPlacesOf task = new FetchPlacesOf(MainActivity.this.getString(R.string.google_maps_key),MainActivity.this);
+                for (Poblacio poblacion: poblacions) {
+                    task.addPoblacion(poblacion,"pharmacy");
+                }
+                task.execute();
+                txt.setText(pob.get().toString().replace("[","").replace("]",""));
             }
         });
     }

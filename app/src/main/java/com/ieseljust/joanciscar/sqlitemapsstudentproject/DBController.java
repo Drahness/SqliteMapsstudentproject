@@ -2,19 +2,32 @@ package com.ieseljust.joanciscar.sqlitemapsstudentproject;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.GenericDAO;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PlaceDAO;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.TiposDAO;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Place;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Poblacio;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Tipos;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.FetchPlacesOf;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBController extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "Poblacions";
+    private static final String DATABASE_NAME = "Lugares";
     private static final int DATABASE_VERSION = 1;
+    private final Context context;
 
     public DBController(Context context) {
         super (context, DATABASE_NAME, null,  DATABASE_VERSION);
+        this.context = context;
     }
 
     /**
@@ -25,36 +38,29 @@ public class DBController extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Poblacion (" +
-                "INT codi PRIMARY KEY," +
-                "VARCHAR(30) nom NO NULL" +
-                "DOUBLE lat NO NULL," +
-                "DOUBLE lon NO NULL," +
-                "INT radius NO NULL)");
-        db.execSQL("INSERT INTO Poblacion VALUES (46712,'Piles',38.9408685,-0.1324241,1000)");
-        db.execSQL("INSERT INTO Poblacion VALUES (46711,'Miramar',38.9501877,-0.1405837,1000)");
-        db.execSQL("INSERT INTO Poblacion VALUES (46713,'Bellreguard',38.9466531,-0.1624822,2000)");
-        db.execSQL("INSERT INTO Poblacion VALUES (46715,'Alqueria de la comtessa',38.9367938,-0.1509766,1000)");
-        db.execSQL("INSERT INTO Poblacion VALUES (46702,'Gandia',38.96735,-0.1853385,5000)");
-        db.execSQL("INSERT INTO Poblacion VALUES (46701,'Grao Gandia',39.007931,-0.1679302,5000)");
-        db.execSQL("INSERT INTO Poblacion VALUES (46740,'Carcaixent',39.1214619,-0.4479085,2000)");
-        db.execSQL("CREATE TABLE Tipos (" +
-                "VARCHAR(20) googletype PRIMARY KEY," +
-                "VARCHAR(20) tipo NO NULL)");
-        db.execSQL("CREATE TABLE Sitio (" +
-                "INT codi NOT NULL" +
-                "VARCHAR(35) place_id PRIMARY KEY," +
-                "DOUBLE lat NO NULL," +
-                "DOUBLE lon NO NULL," +
-                "VARCHAR(80) calle NO NULL," +
-                "VARCHAR(20) tipo NO NULL" +
-                "BLOB foto)");
-        Cursor cursor = db.rawQuery("SELECT codi,lat,lon FROM Poblacion;",null);
-
-        cursor.
-
-
-
+        System.out.println("AAAAA");
+        db.execSQL("CREATE TABLE Poblaciones (\n" +
+                "codi INTEGER PRIMARY KEY,\n" +
+                "nom VARCHAR NOT NULL,\n" +
+                "lat REAL NOT NULL,\n" +
+                "lon REAL NOT NULL,\n" +
+                "radius INTEGER  NOT NULL)");
+        db.execSQL("CREATE TABLE Tipos (\n" +
+                "google_type VARCHAR PRIMARY KEY,\n" +
+                "tipo VARCHAR )");
+        db.execSQL("CREATE TABLE Sitios (\n" +
+                "name VARCHAR NOT NULL,\n" +
+                "place_id VARCHAR PRIMARY KEY,\n" +
+                "codi INTEGER NOT NULL," +
+                "lat REAL NOT NULL,\n" +
+                "lon REAL NOT NULL,\n" +
+                "vecindad VARCHAR NOT NULL,\n" +
+                "foto BLOB," +
+                "FOREIGN KEY (codi) REFERENCES Poblaciones(codi))");
+        db.execSQL("CREATE TABLE Tipos_Sitios (\n" +
+                "place_id VARCHAR,\n" +
+                "tipo VARCHAR,\n" +
+                "PRIMARY KEY(place_id, tipo))");
     }
 
     /**
@@ -79,6 +85,12 @@ public class DBController extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
 
     }
 }

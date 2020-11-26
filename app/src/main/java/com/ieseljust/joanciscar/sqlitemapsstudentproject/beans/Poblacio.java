@@ -1,18 +1,32 @@
-package com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO;
+package com.ieseljust.joanciscar.sqlitemapsstudentproject.beans;
 
 public class Poblacio {
     private int codi;
     private String nom;
     private double lat;
     private double lon;
-    
+
+    private int radius;
+
     public Poblacio() {}
 
-    public Poblacio(int codi, String nom, double lat, double lon) {
+    public Poblacio(int codi, String nom, double lat, double lon, int radius) {
         this.codi = codi;
         this.nom = nom;
         this.lat = lat;
         this.lon = lon;
+        this.radius = radius;
+    }
+
+    @Override
+    public String toString() {
+        return "Poblacio{" +
+                "codi=" + codi +
+                ", nom='" + nom + '\'' +
+                ", lat=" + lat +
+                ", lon=" + lon +
+                ", radius=" + radius +
+                '}';
     }
 
     public int getCodi() {
@@ -45,5 +59,13 @@ public class Poblacio {
 
     public void setLon(double lon) {
         this.lon = lon;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 }

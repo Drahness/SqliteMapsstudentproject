@@ -10,15 +10,32 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewStub;
 
-public abstract class MainMenu extends AppCompatActivity {
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PlaceDAO;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.TiposDAO;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.Tasker;
 
+public abstract class MainMenu extends AppCompatActivity {
+    public static DBController instance;
+    public static String API_KEY;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        API_KEY = getString(R.string.google_maps_key);
         setContentView(R.layout.activity_main);
         ViewStub vs = findViewById(R.id.viewStub);
         vs.setLayoutResource(getActivityLayout());
         vs.inflate();
+        instance = new DBController(MainMenu.this);
+        instance.getWritableDatabase();
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                super.run();
+            }
+        };
+        t.start();
+
     }
 
     @LayoutRes
