@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteStatement;
 
 import androidx.annotation.Nullable;
 
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.DBController;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Poblacio;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
 
 import java.util.ArrayList;
 import java.util.List;

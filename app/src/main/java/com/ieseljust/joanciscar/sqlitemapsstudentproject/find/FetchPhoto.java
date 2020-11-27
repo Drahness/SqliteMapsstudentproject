@@ -3,12 +3,11 @@ package com.ieseljust.joanciscar.sqlitemapsstudentproject.find;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.GoogleFetcherUtils;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Place;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Place;
 
-import java.io.IOException;
 import java.net.URL;
 
+@Deprecated
 public class FetchPhoto extends AsyncTask<URL,Void, Bitmap> {
     private Place placeOfThePicture;
 
@@ -18,15 +17,16 @@ public class FetchPhoto extends AsyncTask<URL,Void, Bitmap> {
     }
 
     @Override
-    protected Bitmap doInBackground(URL... urls) {
+    protected Bitmap doInBackground(URL... urls) {/*
         try {
             Bitmap bitmap = GoogleFetcherUtils.getImage(urls[0]);
-            placeOfThePicture.setFoto(bitmap);
+            placeOfThePicture.setFotoReference(bitmap);
             return bitmap;
         } catch (IOException e) {
-            placeOfThePicture.setFoto(null);
+            placeOfThePicture.setFotoReference(null);
             return null;
-        }
+        }*/
+        return null;
     }
 
     @Override

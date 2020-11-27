@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteStatement;
 
 import androidx.annotation.Nullable;
 
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.DBController;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Tipos;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Tipos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +42,27 @@ public class TiposDAO implements GenericDAO<Tipos,String>{
 
     @Override
     public boolean insert(Tipos obj) {
-        return false;// TODO
+        SQLiteStatement stat = db.compileStatement("INSERT INTO Tipos (google_type,tipo) VALUES (?,?)");
+        stat.bindString(1,obj.getGoogle_type());
+        if(obj.getLocal_type() == null) {
+            stat.bindNull(2);
+        } else {
+            stat.bindString(2, obj.getLocal_type());
+        }
+        return stat.executeUpdateDelete() > 0;
     }
 
     @Override
     public boolean update(Tipos obj, String key) {
         SQLiteStatement stat = db.compileStatement("UPDATE Tipos SET google_type = ?, tipo = ?" +
                 "  WHERE google_type = ?");
-        stat.bindString(1,key);
+        stat.bindString(1,obj.getGoogle_type());
+        if(obj.getLocal_type() == null) {
+            stat.bindNull(2);
+        } else {
+            stat.bindString(2, obj.getLocal_type());
+        }
+        stat.bindString(3,key);
         return stat.executeUpdateDelete() > 0;
     }
 

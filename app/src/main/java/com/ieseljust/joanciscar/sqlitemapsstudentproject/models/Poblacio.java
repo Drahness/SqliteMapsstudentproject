@@ -1,11 +1,14 @@
-package com.ieseljust.joanciscar.sqlitemapsstudentproject.beans;
+package com.ieseljust.joanciscar.sqlitemapsstudentproject.models;
 
-public class Poblacio {
+import java.io.Serializable;
+import java.util.List;
+
+public class Poblacio implements Serializable {
     private int codi;
     private String nom;
     private double lat;
     private double lon;
-
+    private List<Place> lugares;
     private int radius;
 
     public Poblacio() {}
@@ -16,6 +19,7 @@ public class Poblacio {
         this.lat = lat;
         this.lon = lon;
         this.radius = radius;
+
     }
 
     @Override

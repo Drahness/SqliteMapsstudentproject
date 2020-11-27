@@ -5,12 +5,12 @@
     <string name="home">Home</string>
     <string name="maps">My maps</string>
 
-    <string name="pharmacy" translatable="true"     >Farmacia</string>
-    <string name="bar" translatable="true"          >Bar</string>
-    <string name="police" translatable="true"       >Estacion de Policia</string>
-    <string name="city_hall" translatable="true"    >Ayuntamiento</string>
-    <string name="restaurant" translatable="true"   >Restaurante</string>
-    <string name="school" translatable="true"       >Escuela</string>
+    <string name="pharmacy" translatable="true">Farmacia</string>
+    <string name="bar" translatable="true">Bar</string>
+    <string name="police" translatable="true">Estacion de Policia</string>
+    <string name="city_hall" translatable="true">Ayuntamiento</string>
+    <string name="restaurant" translatable="true">Restaurante</string>
+    <string name="school" translatable="true">Escuela</string>
     <string-array name="types">
         <item>pharmacy</item>
         <item>bar</item>
@@ -19,4 +19,15 @@
         <item>restaurant</item>
         <item>school</item>
     </string-array>
+    <string name="title_activity_poblacion_maps">Map</string>
+    <string name="title_activity_sitios_en_poblacion">Map</string>
+    <string name="title_activity_poblaciones_formulario">PoblacionesFormulario</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

@@ -1,7 +1,9 @@
-package com.ieseljust.joanciscar.sqlitemapsstudentproject;
+package com.ieseljust.joanciscar.sqlitemapsstudentproject.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.MainMenu;
 
 import org.json.JSONException;
 import org.json.JSONObject;

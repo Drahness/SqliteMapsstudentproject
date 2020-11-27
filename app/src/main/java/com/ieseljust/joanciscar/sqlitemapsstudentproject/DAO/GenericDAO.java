@@ -5,8 +5,6 @@ import android.database.sqlite.SQLiteStatement;
 
 import androidx.annotation.Nullable;
 
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Place;
-
 import java.util.Arrays;
 import java.util.List;
 

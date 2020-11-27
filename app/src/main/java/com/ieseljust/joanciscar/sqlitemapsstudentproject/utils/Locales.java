@@ -1,13 +1,10 @@
-package com.ieseljust.joanciscar.sqlitemapsstudentproject;
+package com.ieseljust.joanciscar.sqlitemapsstudentproject.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import androidx.annotation.Nullable;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +33,6 @@ public class Locales {
         if(!locale.containsKey(googleType)) {
             int identifier = resources.getIdentifier(googleType,null,pack);
             String string = resources.getString(identifier);
-            if(locale == null) {
-                return null;
-            }
             locale.put(googleType,string);
             return string;
         }

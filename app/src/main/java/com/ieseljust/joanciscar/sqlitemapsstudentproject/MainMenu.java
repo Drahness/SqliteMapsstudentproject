@@ -10,10 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewStub;
 
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PlaceDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.TiposDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.Tasker;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
 
 public abstract class MainMenu extends AppCompatActivity {
     public static DBController instance;
@@ -55,7 +52,7 @@ public abstract class MainMenu extends AppCompatActivity {
             i.setClass(this,MainActivity.class);
         }
         else if(id == R.id.maps_item_toolbar) {
-            i.setClass(this,MapsActivity.class);
+            i.setClass(this,PoblacionMaps.class);
         }
         startActivity(i);
         return super.onOptionsItemSelected(item);

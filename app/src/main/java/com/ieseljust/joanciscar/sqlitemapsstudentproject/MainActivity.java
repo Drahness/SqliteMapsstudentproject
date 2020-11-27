@@ -5,15 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
-import com.google.gson.JsonObject;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Poblacio;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.FetchPlacesOf;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.JSONToDBO;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -56,7 +51,7 @@ public class MainActivity extends MainMenu {
                 }
                 List<Poblacio> poblacions = pob.get();
                 List<JSONObject> listOfObj = new ArrayList<>();
-                FetchPlacesOf task = new FetchPlacesOf(MainActivity.this.getString(R.string.google_maps_key),MainActivity.this);
+                FetchPlacesOf task = new FetchPlacesOf(MainActivity.this);
                 for (Poblacio poblacion: poblacions) {
                     task.addPoblacion(poblacion,"pharmacy");
                 }

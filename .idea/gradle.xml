@@ -10,8 +10,8 @@
         <option name="gradleJvm" value="1.8" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
+            <option value="/mnt/B03CA4F93CA4BC2A/Users/Catalan Renegado/AndroidStudioProjects/SqliteMapsstudentproject" />
+            <option value="/mnt/B03CA4F93CA4BC2A/Users/Catalan Renegado/AndroidStudioProjects/SqliteMapsstudentproject/app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

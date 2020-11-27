@@ -1,14 +1,14 @@
 package com.ieseljust.joanciscar.sqlitemapsstudentproject.find;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Place;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.R;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Place;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PlaceDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.GoogleFetcherUtils;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.beans.Poblacio;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.GoogleFetcherUtils;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,18 +19,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
     private List<Integer> codes = new ArrayList<>();
     private List<String> urls = new ArrayList<>();
-    private final String google_key;
     private Context context;
+    private final String google_key;
 
-    public FetchPlacesOf(String google_key, Context context) {
+    public FetchPlacesOf(Context context) {
         super();
-        this.google_key = google_key;
         this.context = context;
+        google_key = context.getString(R.string.google_maps_key);
     }
 
     @Override
@@ -75,8 +74,7 @@ public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
             try {
                 Place[] places = getPlacesOf(val);
                 for (Place pl: places) {
-                    while(pl.working());
-                    dao.insert(pl);
+                    dao.insertOrUpdate(pl);
                 }
             } catch (JSONException | MalformedURLException e) {
                 e.printStackTrace();

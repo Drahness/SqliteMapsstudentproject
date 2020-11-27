@@ -1,8 +1,10 @@
-package com.ieseljust.joanciscar.sqlitemapsstudentproject.beans;
+package com.ieseljust.joanciscar.sqlitemapsstudentproject.models;
 
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.Locales;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.Locales;
 
-public class Tipos {
+import java.io.Serializable;
+
+public class Tipos implements Serializable {
     private String google_type;
     private String local_type;
 

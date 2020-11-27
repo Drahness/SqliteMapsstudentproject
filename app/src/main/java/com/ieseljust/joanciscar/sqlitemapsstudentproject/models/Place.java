@@ -1,22 +1,16 @@
-package com.ieseljust.joanciscar.sqlitemapsstudentproject.beans;
-
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
-
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.TiposDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.GoogleFetcherUtils;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.FetchPhoto;
+package com.ieseljust.joanciscar.sqlitemapsstudentproject.models;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Place {
+public class Place implements Serializable {
     private Poblacio codi;
     private String name;
     private String place_id;
@@ -24,9 +18,7 @@ public class Place {
     private double lon;
     private String vecindad;
     private Tipos[] tipos;
-    private Bitmap foto;
-
-    private FetchPhoto worker;
+    private String foto;
 
     public Place(JSONObject o) throws JSONException, MalformedURLException {
         this.name = o.getString("name");
@@ -45,8 +37,7 @@ public class Place {
         if(!o.isNull("photos")) {
             jsonArray = o.getJSONArray("photos");
             jsonObject = jsonArray.getJSONObject(0);
-            worker = new FetchPhoto(this);
-            worker.execute(GoogleFetcherUtils.getImageURL(jsonObject.getString("photo_reference")));
+            foto = jsonObject.getString("photo_reference");
         } else {
             foto = null;
         }
@@ -110,20 +101,11 @@ public class Place {
     public void setTipos(Tipos[] tipos) {
         this.tipos = tipos;
     }
-    public Bitmap getFoto() {
+    public String getFotoReference() {
         return foto;
     }
-    public void setFoto(Bitmap foto) {
+    public void setFotoReference(String foto) {
         this.foto = foto;
     }
 
-    public boolean working() {
-        if(worker != null || worker.getStatus() != AsyncTask.Status.FINISHED) {
-            return true;
-        }
-        else {
-            worker = null;
-            return false;
-        }
-    }
 }
