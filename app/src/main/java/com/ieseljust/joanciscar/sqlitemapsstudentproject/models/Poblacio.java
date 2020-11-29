@@ -24,13 +24,7 @@ public class Poblacio implements Serializable {
 
     @Override
     public String toString() {
-        return "Poblacio{" +
-                "codi=" + codi +
-                ", nom='" + nom + '\'' +
-                ", lat=" + lat +
-                ", lon=" + lon +
-                ", radius=" + radius +
-                '}';
+        return  nom + ": "+codi + "\nCoords: "+lat+","+lon+"\nRadius:"+radius;
     }
 
     public int getCodi() {

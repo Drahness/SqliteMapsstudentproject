@@ -1,7 +1,6 @@
 package com.ieseljust.joanciscar.sqlitemapsstudentproject;
 
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,7 +20,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PlaceDAO;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Place;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
 
 import java.util.List;
@@ -57,7 +55,7 @@ public class PoblacionMaps extends MainMenu implements OnMapReadyCallback, Googl
 
     @Override
     protected int getActivityLayout() {
-        return R.layout.activity_poblacion_maps;
+        return R.layout.content_poblacion_maps;
     }
 
     /**
@@ -76,14 +74,13 @@ public class PoblacionMaps extends MainMenu implements OnMapReadyCallback, Googl
         /*LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
          */
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(myLocation.getLatitude(),myLocation.getLongitude())));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()),13));
         List<Poblacio> poblaciones = new PoblacioDAO(this).get();
         for (Poblacio pob : poblaciones) {
             LatLng latLng = new LatLng(pob.getLat(),pob.getLon());
             Marker mark = mMap.addMarker(new MarkerOptions().position(latLng).title(pob.getNom()));
             mark.setTag(pob);
         }
-        mMap.setMinZoomPreference(9);
         mMap.setOnMarkerClickListener(this);
     }
 

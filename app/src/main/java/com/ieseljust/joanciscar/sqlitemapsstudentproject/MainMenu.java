@@ -54,6 +54,9 @@ public abstract class MainMenu extends AppCompatActivity {
         else if(id == R.id.maps_item_toolbar) {
             i.setClass(this,PoblacionMaps.class);
         }
+        else if(id == R.id.management) {
+            i.setClass(this,PoblacionesFormulario.class);
+        }
         startActivity(i);
         return super.onOptionsItemSelected(item);
     }

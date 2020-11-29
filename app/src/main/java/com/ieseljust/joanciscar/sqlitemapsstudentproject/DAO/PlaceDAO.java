@@ -73,7 +73,7 @@ public class PlaceDAO implements GenericDAO<Place,String> {
         for (Tipos tipo: obj.getTipos()) {
             tipos.bindString(1,obj.getPlace_id());
             tipos.bindString(2,tipo.getGoogle_type());
-            if(!tiposDAO.exists(tipo.getGoogle_type())) {
+            if(tiposDAO.get(tipo.getGoogle_type()) != null) {
                 tiposDAO.insert(tipo);
             };
             i+=tipos.executeInsert();
@@ -105,7 +105,7 @@ public class PlaceDAO implements GenericDAO<Place,String> {
         for (int i = 0; i < obj.getTipos().length; i++) {
             updates.bindString(1,obj.getPlace_id());
             updates.bindString(2,obj.getTipos()[i].getGoogle_type());
-            if(!tiposDAO.exists(obj.getTipos()[i].getGoogle_type())) {
+            if(tiposDAO.get(obj.getTipos()[i].getGoogle_type()) != null) {
                 tiposDAO.insert(obj.getTipos()[i]);
             };
         }
@@ -191,8 +191,8 @@ public class PlaceDAO implements GenericDAO<Place,String> {
     public List<Place> getFor(Poblacio pob,String type) {
         PoblacioDAO dao = new PoblacioDAO(context);
         List<Place> places = new ArrayList<>();
-        if(!dao.exists(pob.getCodi())) {
-            dao.insert(pob);
+        if(dao.get(pob.getCodi()) != null) {
+            //dao.insert(pob);
             FetchPlacesOf worker = new FetchPlacesOf(context);
             worker.addPoblacion(pob,type);
             worker.execute();

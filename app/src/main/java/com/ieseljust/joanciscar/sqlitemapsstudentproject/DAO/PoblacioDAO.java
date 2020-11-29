@@ -66,8 +66,10 @@ public class PoblacioDAO implements GenericDAO<Poblacio,Integer> {
     @Override
     public Poblacio get(Integer key) {
         Cursor cursor = db.rawQuery(String.format("SELECT * from Poblaciones where codi = %s",key),null);
-        cursor.moveToNext();
-        Poblacio p = getFromCursor(cursor);
+        Poblacio p = null;
+        if(cursor.moveToNext()) {
+            p = getFromCursor(cursor);
+        }
         cursor.close();
         return p;
 

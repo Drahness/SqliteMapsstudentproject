@@ -158,7 +158,6 @@ public class MapsActivity extends MainMenu implements OnMapReadyCallback {
         if(myLocation != null) {
             LatLng latLngLocation = new LatLng(this.myLocation.getLatitude(), this.myLocation.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngLocation));
-
         }
     }
 

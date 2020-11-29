@@ -16,10 +16,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SqliteMapsstudentproject">
+        <activity android:name=".PoblacionsListView"></activity>
+        <activity android:name=".PlaceActivity" />
         <activity
             android:name=".PoblacionesFormulario"
             android:label="@string/title_activity_poblaciones_formulario"
-            android:theme="@style/Theme.SqliteMapsstudentproject.NoActionBar"></activity>
+            android:theme="@style/Theme.SqliteMapsstudentproject.NoActionBar" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

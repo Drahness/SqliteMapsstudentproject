@@ -21,10 +21,6 @@ public interface GenericDAO<T, K> {
     @Nullable
     T get(K key);
 
-    default boolean exists(K key) {
-        return get(key) != null;
-    }
-
     List<T> getWhere(String where);
 
     /**
