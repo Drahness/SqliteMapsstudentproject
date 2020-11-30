@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.find.FetchPlacesOf;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
@@ -20,6 +22,7 @@ import java.util.List;
 public class PlaceDAO implements GenericDAO<Place,String> {
     private final SQLiteDatabase db;
     private static SQLiteStatement placeInsertStatement;
+    private static MutableLiveData<List<Place>> places_cache;
     private final Context context;
 
     public PlaceDAO(Context context) {
@@ -28,6 +31,25 @@ public class PlaceDAO implements GenericDAO<Place,String> {
         this.context = context;
         getCompiledInsert(db);
     }
+
+    // MUTABLE LIVE DATA IMPLEMENTATION
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // MUTABLE LIVE DATA IMPLEMENTATION
+
 
     public static SQLiteStatement getCompiledInsert(@Nullable SQLiteDatabase db) {
         if(placeInsertStatement == null) {
@@ -55,6 +77,8 @@ public class PlaceDAO implements GenericDAO<Place,String> {
 
     public boolean insert(Place obj) {
         int i = 0;
+        TiposDAO tiposDAO = new TiposDAO(context);
+        db.beginTransaction();
         SQLiteStatement stat = db.compileStatement("INSERT INTO Sitios"+" VALUES (?,?,?,?,?,?,?)");
         SQLiteStatement tipos = db.compileStatement("INSERT INTO Tipos_Sitios VALUES (?,?)");
         stat.bindString(1,obj.getName());
@@ -69,7 +93,6 @@ public class PlaceDAO implements GenericDAO<Place,String> {
             stat.bindNull(7);
         }
         i += stat.executeInsert();
-        TiposDAO tiposDAO = new TiposDAO(context);
         for (Tipos tipo: obj.getTipos()) {
             tipos.bindString(1,obj.getPlace_id());
             tipos.bindString(2,tipo.getGoogle_type());
@@ -78,6 +101,8 @@ public class PlaceDAO implements GenericDAO<Place,String> {
             };
             i+=tipos.executeInsert();
         }
+        db.setTransactionSuccessful();
+        db.endTransaction();
         return i > 0;
     }
     // TODO to interface
@@ -101,13 +126,10 @@ public class PlaceDAO implements GenericDAO<Place,String> {
                 "foto = ?" +
                 "where place_id = ?");
         SQLiteStatement updates = db.compileStatement("UPDATE Tipos_Sitios SET place_id = ?, google_type = ? WHERE place_id = ?");
-        TiposDAO tiposDAO = new TiposDAO(context);
         for (int i = 0; i < obj.getTipos().length; i++) {
             updates.bindString(1,obj.getPlace_id());
             updates.bindString(2,obj.getTipos()[i].getGoogle_type());
-            if(tiposDAO.get(obj.getTipos()[i].getGoogle_type()) != null) {
-                tiposDAO.insert(obj.getTipos()[i]);
-            };
+            updates.executeUpdateDelete();
         }
         putInStatement(obj,stat,null);
         stat.bindString(8,key);
@@ -188,6 +210,11 @@ public class PlaceDAO implements GenericDAO<Place,String> {
         return pl;
     }
 
+    @Override
+    public String getKey(Place obj) {
+        return obj.getPlace_id();
+    }
+    // TODO REFACTOR THIS
     public List<Place> getFor(Poblacio pob,String type) {
         PoblacioDAO dao = new PoblacioDAO(context);
         List<Place> places = new ArrayList<>();
@@ -203,5 +230,8 @@ public class PlaceDAO implements GenericDAO<Place,String> {
             places.add(getFromCursor(select));
         }
         return places;
+    }
+    public List<Place> getFor(Poblacio pob,Tipos type) {
+        return this.getFor(pob,type.getGoogle_type());
     }
 }
