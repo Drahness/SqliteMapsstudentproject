@@ -41,6 +41,12 @@ public class PoblacioDAO implements GenericDAO<Poblacio,Integer> {
         this.putInStatement(obj,stat,null);
         return stat.executeInsert() != -1;
     }
+    public boolean safeInsert(Poblacio obj) {
+        if(this.get(obj.getCodi()) == null) {
+            return this.insert(obj);
+        }
+        return false;
+    }
 
     @Override
     public boolean update(Poblacio obj, Integer key) {
