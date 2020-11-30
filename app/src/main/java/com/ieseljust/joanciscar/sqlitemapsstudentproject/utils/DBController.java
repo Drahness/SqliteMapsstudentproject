@@ -1,12 +1,13 @@
 package com.ieseljust.joanciscar.sqlitemapsstudentproject.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBController extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "Lugares";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 6;
     private final Context context;
 
     public DBController(Context context) {
@@ -40,12 +41,23 @@ public class DBController extends SQLiteOpenHelper {
                 "lon REAL NOT NULL,\n" +
                 "vecindad VARCHAR NOT NULL,\n" +
                 "foto VARCHAR," +
+                "telefono VARCHAR," +
                 "FOREIGN KEY (codi) REFERENCES Poblaciones(codi))");
         db.execSQL("CREATE TABLE Tipos_Sitios (\n" +
                 "place_id VARCHAR,\n" +
                 "google_type VARCHAR,\n" +
                 "FOREIGN KEY (place_id) REFERENCES Sitios(place_id)," +
                 "FOREIGN KEY (google_type) REFERENCES TIpos(google_type))");
+        db.execSQL("CREATE TABLE LAST_FETCH_POBLACIONES (" +
+                "codi INTEGER," +
+                "time INTEGER NOT NULL," +
+                "google_type VARCHAR," +
+                "FOREIGN KEY (codi) REFERENCES Poblaciones(codi)," +
+                "FOREIGN KEY (google_type) REFERENCES Tipos(google_type))");
+        db.execSQL("CREATE TABLE FIRST_INIT (first_init INTEGER)");
+        db.execSQL("INSERT INTO FIRST_INIT VALUES (1)");
+
+
     }
 
     /**
@@ -98,6 +110,25 @@ public class DBController extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE Tipos_Sitios");
             db.execSQL("ALTER TABLE Tipos_Sitios2 RENAME TO Tipos_Sitios");
             db.execSQL("PRAGMA foreign_keys=on;");
+            oldVersion++;
+        }
+        if(oldVersion == 3 && newVersion > oldVersion) {
+            db.execSQL("CREATE TABLE LAST_FETCH_POBLACIONES (" +
+                    "codi INTEGER," +
+                    "time INTEGER NOT NULL," +
+                    "google_type VARCHAR," +
+                    "FOREIGN KEY (codi) REFERENCES Poblaciones(codi)," +
+                    "FOREIGN KEY (google_type) REFERENCES Tipos(google_type))");
+            oldVersion++;
+        }
+        if(oldVersion == 4 && newVersion > oldVersion) {
+            db.execSQL("CREATE TABLE FIRST_INIT (first_init INTEGER)");
+            db.execSQL("INSERT INTO FIRST_INIT VALUES (1)");
+            oldVersion++;
+        }
+        if(oldVersion == 5 && newVersion > oldVersion) {
+            db.execSQL("ALTER TABLE Sitios ADD COLUMN telefono VARCHAR");
+            oldVersion++;
         }
         System.out.println(oldVersion+" level existing db to a level -> "+newVersion);
     }
@@ -106,6 +137,16 @@ public class DBController extends SQLiteOpenHelper {
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
 
+    }
+
+    public boolean firstInit() {
+        Cursor init = this.getWritableDatabase().rawQuery("SELECT * FROM FIRST_INIT",null);
+        if(init.moveToNext()) {
+            boolean firstInit = init.getLong(0) == 1;
+            this.getWritableDatabase().compileStatement("UPDATE FIRST_INIT SET first_init = 0").executeUpdateDelete();
+            return firstInit;
+        }
+        return true;
     }
 
     private void modifyTable(SQLiteDatabase db, String tablename, String statement) {

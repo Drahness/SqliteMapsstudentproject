@@ -19,12 +19,13 @@ public class Place implements Serializable {
     private String vecindad;
     private Tipos[] tipos;
     private String foto;
+    private String phone = null;
 
     public Place(JSONObject o) throws JSONException, MalformedURLException {
         this.name = o.getString("name");
         JSONArray jsonArray = o.getJSONArray("types");
         List<Tipos> typesOut = new ArrayList<>();
-        for (int i = 0; i < typesOut.size() ; i++) {
+        for (int i = 0; i < jsonArray.length() ; i++) {
             typesOut.add(new Tipos(jsonArray.getString(i)));
         }
         this.tipos= typesOut.toArray(new Tipos[0]);
@@ -48,19 +49,7 @@ public class Place implements Serializable {
         this.codi = codi;
     }
 
-    @Override
-    public String toString() {
-        return "Place{" +
-                "codi=" + codi +
-                ", name='" + name + '\'' +
-                ", place_id='" + place_id + '\'' +
-                ", lat=" + lat +
-                ", lon=" + lon +
-                ", vecindad='" + vecindad + '\'' +
-                ", tipos=" + Arrays.toString(tipos) +
-                ", foto=" + foto +
-                '}';
-    }
+
 
     public Poblacio getCodi() {
         return codi;
@@ -108,4 +97,6 @@ public class Place implements Serializable {
         this.foto = foto;
     }
 
+    public String getPhone() {return this.phone;}
+    public void setPhone(String phone) {this.phone = phone;}
 }

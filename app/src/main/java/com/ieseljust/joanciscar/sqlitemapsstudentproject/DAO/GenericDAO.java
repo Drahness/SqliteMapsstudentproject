@@ -30,7 +30,7 @@ public interface GenericDAO<T, K> {
      * @param stat
      * @param integer
      */
-    public void putInStatement(T obj, SQLiteStatement stat, @Nullable Integer integer);
+    void putInStatement(T obj, SQLiteStatement stat, @Nullable Integer integer);
 
     /**
      * Retrieves a basic instance with a SELECT * FROM X without any relationship, DONT CALL THIS IF
@@ -46,4 +46,12 @@ public interface GenericDAO<T, K> {
         return Arrays.asList(c.getColumnNames()).indexOf(label);
     }
 
+    default boolean safeInsert(T obj) {
+        if(this.get(getKey(obj)) == null) {
+            return this.insert(obj);
+        }
+        return false;
+    }
+
+    K getKey(T obj);
 }

@@ -10,14 +10,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.Task;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PlaceDAO;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Place;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class SitiosEnPoblacion extends MainMenu implements OnMapReadyCallback {
+public class SitiosEnPoblacion extends MainMenu implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private Poblacio pob;
     private String type;
     private GoogleMap mMap;
@@ -53,23 +55,24 @@ public class SitiosEnPoblacion extends MainMenu implements OnMapReadyCallback {
         mMap = googleMap;
         LatLng latLngPoblacion = new LatLng(pob.getLat(),pob.getLon());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngPoblacion,15));
-        List<Place> sitios = new PlaceDAO(this).getFor(pob,type);
+        List<Place> sitios = new PlaceDAO(new DBController(this)).getFor(pob,type);
         Marker mark;
         for (Place sitio : sitios) {
             LatLng sitioPosition = new LatLng(sitio.getLat(),sitio.getLon());
             mark = mMap.addMarker(new MarkerOptions().title(sitio.getName()).position(sitioPosition));
             mark.setTag(sitio);
         }
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                Intent intent = new Intent();
-                intent.setClass(SitiosEnPoblacion.this,PlaceActivity.class);
-                Bundle b = new Bundle();
-                b.putSerializable("sitio", (Serializable) marker.getTag());
-                startActivity(intent,b);
-                return true;
-            }
-        });
+
+        mMap.setOnMarkerClickListener(this);
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Intent intent = new Intent(SitiosEnPoblacion.this,PlaceActivity.class);
+        Bundle b = new Bundle();
+        b.putSerializable("sitio", (Serializable) marker.getTag());
+        intent.putExtras(b);
+        this.startActivity(intent);
+        return true;
     }
 }

@@ -1,10 +1,10 @@
 package com.ieseljust.joanciscar.sqlitemapsstudentproject.find;
 
-import android.content.Context;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
-import com.ieseljust.joanciscar.sqlitemapsstudentproject.R;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.MainMenu;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Place;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PlaceDAO;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.GoogleFetcherUtils;
@@ -23,13 +23,14 @@ import java.util.List;
 public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
     private List<Integer> codes = new ArrayList<>();
     private List<String> urls = new ArrayList<>();
-    private Context context;
-    private final String google_key;
+    private final List<String> tipos = new ArrayList<>();
+    private String google_key;
+    private SQLiteOpenHelper sqLiteOpenHelper;
 
-    public FetchPlacesOf(Context context) {
+    public FetchPlacesOf(SQLiteOpenHelper sqLiteOpenHelper) {
         super();
-        this.context = context;
-        google_key = context.getString(R.string.google_maps_key);
+        this.sqLiteOpenHelper = sqLiteOpenHelper;
+        google_key = MainMenu.API_KEY;
     }
 
     @Override
@@ -39,6 +40,7 @@ public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
                 URL url = new URL(urls[i]);
                 JSONObject json = GoogleFetcherUtils.getJSONContent(url);
                 json.put("codi",codes.get(i));
+                json.put("tipos_google",tipos.get(i));
                 publishProgress(json);
                 /*while(!json.isNull("next_page_token")) {
                     json = GoogleFetcherUtils.getJSONContent(getNextURL(json,url.toString()));
@@ -69,7 +71,7 @@ public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
     @Override
     protected void onProgressUpdate(JSONObject... values) {
         super.onProgressUpdate(values);
-        PlaceDAO dao = new PlaceDAO(context);
+        PlaceDAO dao = new PlaceDAO(sqLiteOpenHelper);
         for (JSONObject val: values) {
             try {
                 Place[] places = getPlacesOf(val);
@@ -88,7 +90,7 @@ public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
         for (int i = 0; i < array.length(); i++) {
             JSONObject json = array.getJSONObject(i);
             places[i] = new Place(json);
-            places[i].setCodi(new PoblacioDAO(context).get(val.getInt("codi")));
+            places[i].setCodi(new PoblacioDAO(sqLiteOpenHelper).get(val.getInt("codi")));
         }
         return places;
     }
@@ -99,7 +101,8 @@ public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
         urls = null;
         codes.clear();
         codes = null;
-        context = null;
+        sqLiteOpenHelper = null;
+        google_key = null;
     }
 
     @Override
@@ -116,7 +119,7 @@ public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
         this.execute(urls.toArray(new String[0]));
     }
 
-    public void addPlace(int codi, String type, double lat, double lon, int radius) {
+    public void addPoblacion(int codi, String type, double lat, double lon, int radius) {
         StringBuilder sb = new StringBuilder();
         sb.append("https://maps.googleapis.com/maps/api/place/nearbysearch/json?")
                 .append("location=").append(lat).append(',').append(lon).append('&')
@@ -126,10 +129,11 @@ public class FetchPlacesOf extends AsyncTask<String, JSONObject,Boolean> {
                 .append("key=").append(google_key);
         urls.add(sb.toString());
         codes.add(codi);
+        tipos.add(type);
 //https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=37.160317,-2.748416&sensor=true&radius=5000&types=pharmacy,market&key=AIzaSyB9GCrd7kBdpXeFq5QMI--dPYfNwaByWHc
     }
 
     public void addPoblacion(Poblacio pob, String type) {
-        this.addPlace(pob.getCodi(),type,pob.getLat(),pob.getLon(),pob.getRadius());
+        this.addPoblacion(pob.getCodi(),type,pob.getLat(),pob.getLon(),pob.getRadius());
     }
 }

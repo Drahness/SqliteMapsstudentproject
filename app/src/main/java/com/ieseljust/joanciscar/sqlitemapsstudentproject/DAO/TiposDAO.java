@@ -3,6 +3,7 @@ package com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 
 import androidx.annotation.Nullable;
@@ -16,10 +17,11 @@ import java.util.List;
 public class TiposDAO implements GenericDAO<Tipos,String>{
     private final SQLiteDatabase db;
     private static SQLiteStatement placeInsertStatement;
-    private final DBController connexion;
+    private final SQLiteOpenHelper connexion;
 
-    public TiposDAO(Context context) {
-        this.connexion = new DBController(context);
+
+    public TiposDAO(SQLiteOpenHelper sqLiteOpenHelper) {
+        this.connexion = sqLiteOpenHelper;
         this.db = connexion.getWritableDatabase();
     }
 
@@ -75,7 +77,7 @@ public class TiposDAO implements GenericDAO<Tipos,String>{
 
     @Override
     public Tipos get(String key) {
-        Cursor selectAll = db.rawQuery("SELECT * FROM Tipos t where google_type" + key,null);
+        Cursor selectAll = db.rawQuery("SELECT * FROM Tipos t where google_type like '" + key+ "'",null);
         Tipos tipos = null;
         if(selectAll.moveToNext()) {
             tipos = getFromCursor(selectAll);
@@ -108,6 +110,11 @@ public class TiposDAO implements GenericDAO<Tipos,String>{
         Tipos t = new Tipos(c.getString(this.getColumnIndex(c,"google_type")));
         t.setLocal_type(c.getString(this.getColumnIndex(c,"tipo")));
         return t;
+    }
+
+    @Override
+    public String getKey(Tipos obj) {
+        return obj.getGoogle_type();
     }
 
 }

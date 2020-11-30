@@ -3,10 +3,12 @@ package com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 
 import androidx.annotation.Nullable;
 
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Tipos;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
 
@@ -14,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PoblacioDAO implements GenericDAO<Poblacio,Integer> {
-    public DBController connexion;
+    public SQLiteOpenHelper connexion;
     public SQLiteDatabase db;
     private static SQLiteStatement poblationsInsertStatement;
 
-    public PoblacioDAO(Context context) {
-        this.connexion = new DBController(context);
+    public PoblacioDAO(SQLiteOpenHelper sqLiteOpenHelper) {
+        this.connexion = sqLiteOpenHelper;
         this.db = connexion.getWritableDatabase();
         getCompiledInsert(db);
     }
@@ -41,11 +43,10 @@ public class PoblacioDAO implements GenericDAO<Poblacio,Integer> {
         this.putInStatement(obj,stat,null);
         return stat.executeInsert() != -1;
     }
-    public boolean safeInsert(Poblacio obj) {
-        if(this.get(obj.getCodi()) == null) {
-            return this.insert(obj);
-        }
-        return false;
+
+    @Override
+    public Integer getKey(Poblacio obj) {
+        return obj.getCodi();
     }
 
     @Override
@@ -123,5 +124,27 @@ public class PoblacioDAO implements GenericDAO<Poblacio,Integer> {
             poblationsInsertStatement = db.compileStatement("INSERT INTO Poblaciones VALUES (?,?,?,?,?)");
         }
         return poblationsInsertStatement;
+    }
+
+    public boolean timeToFetch(Integer codi, String type) {
+        Cursor select = db.rawQuery("SELECT time FROM LAST_FETCH_POBLACIONES WHERE codi = ? and google_type = ?",new String[] {codi.toString(),type});
+        if(select.moveToNext()) {
+            return select.getLong(1) > (3600 * 24);
+        }
+        return true;
+
+    }
+
+    public void actualizeFetchTime(Integer codi, String type) {
+        SQLiteStatement deleteStatement = db.compileStatement("DELETE FROM LAST_FETCH_POBLACIONES WHERE codi = ? and google_type = ?");
+        deleteStatement.bindString(2,type);
+        deleteStatement.bindLong(1,codi);
+        deleteStatement.executeUpdateDelete();
+        SQLiteStatement insertStatementdb = db.compileStatement("INSERT INTO LAST_FETCH_POBLACIONES (codi,time,google_type) VALUES (?,?,?)");
+        insertStatementdb.bindLong(2,System.currentTimeMillis()/1000);
+        insertStatementdb.bindLong(1,codi);
+        insertStatementdb.bindString(3,type);
+        deleteStatement.executeInsert();
+
     }
 }

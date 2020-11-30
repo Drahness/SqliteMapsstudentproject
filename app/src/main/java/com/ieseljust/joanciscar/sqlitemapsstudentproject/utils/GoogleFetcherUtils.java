@@ -19,7 +19,6 @@ import java.net.URLConnection;
 
 public final class GoogleFetcherUtils {
     public static String API_KEY = MainMenu.API_KEY;
-    public static int MAXWITDH = 400;
 
     public static JSONObject getJSONContent(URL url) throws IOException, JSONException {
         System.out.println(url.toString());
@@ -54,10 +53,10 @@ public final class GoogleFetcherUtils {
     public static byte[] getImageBytes(URL url) throws IOException {
         return getBytes(getImage(url));
     }
-    public static URL getImageURL(String imgReference) throws MalformedURLException {
+    public static URL getImageURL(String imgReference,Integer max_witdh) throws MalformedURLException {
         StringBuilder sb = new StringBuilder();
         sb.append("https://maps.googleapis.com/maps/api/place/photo?");
-        sb.append("maxwidth=").append(MAXWITDH).append('&');
+        sb.append("maxwidth=").append(max_witdh).append('&');
         sb.append("photoreference=").append(imgReference).append('&');
         sb.append("key=").append(API_KEY);
         // https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU&key=YOUR_API_KEY
@@ -74,5 +73,23 @@ public final class GoogleFetcherUtils {
                 .append("key=").append(API_KEY);
         return new URL(sb.toString());
 //https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=37.160317,-2.748416&sensor=true&radius=5000&types=pharmacy,market&key=AIzaSyB9GCrd7kBdpXeFq5QMI--dPYfNwaByWHc
+    }
+
+    public static URL getPlaceDetailsURL(String place_id,String...fields) throws MalformedURLException {
+        //https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&fields=name,rating,formatted_phone_number&key=YOUR_API_KEY
+        StringBuilder sb = new StringBuilder();
+        sb.append("https://maps.googleapis.com/maps/api/place/details/json?").append("place_id=").append(place_id);
+        sb.append("&fields=");
+        for (String field:
+             fields) {
+            sb.append(field+",");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        sb.append("&key=").append(API_KEY);
+        return new URL(sb.toString());
+    }
+
+    public static JSONObject getResults(URL url) throws JSONException, IOException {
+        return getJSONContent(url).getJSONObject("result");
     }
 }

@@ -1,6 +1,7 @@
 package com.ieseljust.joanciscar.sqlitemapsstudentproject;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -29,6 +31,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
 
 public class PoblacionesFormulario extends MainMenu implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -45,7 +48,7 @@ public class PoblacionesFormulario extends MainMenu implements OnMapReadyCallbac
     private Button update;
     private Button insert;
     private Button cancel;
-
+    private SupportMapFragment mapFragment;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -64,6 +67,10 @@ public class PoblacionesFormulario extends MainMenu implements OnMapReadyCallbac
                 lat.setText(String.valueOf(pobSeleccionat.getLat()));
                 lon.setText(String.valueOf(pobSeleccionat.getLon()));
                 radius.setText(String.valueOf(pobSeleccionat.getRadius()));
+
+                LatLng latLng = new LatLng(pobSeleccionat.getLat(),pobSeleccionat.getLon());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latLng.latitude,latLng.longitude),13));
+                mMap.addMarker(new MarkerOptions().title(pobSeleccionat.getNom()+": "+pobSeleccionat.getCodi()).position(latLng));
             }
         }
     }
@@ -111,27 +118,18 @@ public class PoblacionesFormulario extends MainMenu implements OnMapReadyCallbac
         insert = findViewById(R.id.insert_button);
         cancel = findViewById(R.id.cancel);
 
-
-        LocationManager locationManager = (LocationManager)
-                getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            if (mMap != null) {
-                mMap.setMyLocationEnabled(true);
-            }
-            return;
-        } else {
-            if (mMap != null) {
-                mMap.setMyLocationEnabled(true);
-            }
-        }
-        myLocation = locationManager.getLastKnownLocation(locationManager
-                .getBestProvider(criteria, false));
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        } else {
+            // In debug, you need to set a location or will throw an exception,
+            LocationManager locationManager = (LocationManager)
+                    getSystemService(Context.LOCATION_SERVICE);
+            myLocation = locationManager.getLastKnownLocation(locationManager
+                    .getBestProvider(new Criteria(), false));
+            mapFragment.getMapAsync(this);
+        }
 
         findViewById(R.id.insert_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,7 +175,7 @@ public class PoblacionesFormulario extends MainMenu implements OnMapReadyCallbac
                             Double.parseDouble(latitude),
                             Double.parseDouble(longitude),
                             Integer.parseInt(radius_txt));
-                    PoblacioDAO DAO = new PoblacioDAO(PoblacionesFormulario.this);
+                    PoblacioDAO DAO = new PoblacioDAO(new DBController(PoblacionesFormulario.this));
                     builder.setTitle("Confirmar accion.");
                     builder.setMessage("Quieres añadir la entrada: \n" + pob +" ?");
                     builder.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
@@ -239,7 +237,7 @@ public class PoblacionesFormulario extends MainMenu implements OnMapReadyCallbac
                     builder.setMessage(sb.toString());
                     builder.create().show();
                 } else {
-                    PoblacioDAO DAO = new PoblacioDAO(PoblacionesFormulario.this);
+                    PoblacioDAO DAO = new PoblacioDAO(new DBController(PoblacionesFormulario.this));
                     Poblacio pob = new Poblacio(Integer.parseInt(nuevoPostal),
                             cityName,
                             Double.parseDouble(latitude),
@@ -280,7 +278,7 @@ public class PoblacionesFormulario extends MainMenu implements OnMapReadyCallbac
                     builder.setMessage(sb.toString());
                     builder.create().show();
                 } else {
-                    PoblacioDAO DAO = new PoblacioDAO(PoblacionesFormulario.this);
+                    PoblacioDAO DAO = new PoblacioDAO(new DBController(PoblacionesFormulario.this));
                     int po = Integer.parseInt(postal);
                     Poblacio pob = DAO.get(po);
                     if (pob != null) {
@@ -345,5 +343,37 @@ public class PoblacionesFormulario extends MainMenu implements OnMapReadyCallbac
                 lon.setText(String.valueOf(latLng.longitude));
             }
         });
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                if (clickMark != null) {
+                    clickMark.remove();
+                }
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            // In debug, you need to set a location or will throw an exception,
+            LocationManager locationManager = (LocationManager)
+                    getSystemService(Context.LOCATION_SERVICE);
+            myLocation = locationManager.getLastKnownLocation(locationManager
+                    .getBestProvider(new Criteria(), false));
+            mapFragment.getMapAsync(this);
+        }
     }
 }

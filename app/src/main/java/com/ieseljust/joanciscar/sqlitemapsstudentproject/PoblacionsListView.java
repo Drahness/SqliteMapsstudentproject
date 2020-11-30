@@ -11,6 +11,7 @@ import android.widget.SimpleAdapter;
 
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class PoblacionsListView extends MainMenu {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<Poblacio> poblacioList = new PoblacioDAO(this).get();
+        List<Poblacio> poblacioList = new PoblacioDAO(new DBController(this)).get();
         List<Map<String,Object>> adapterMap = new ArrayList<>();
         listView = findViewById(R.id.poblacions_list);
         for (Poblacio pob : poblacioList) {

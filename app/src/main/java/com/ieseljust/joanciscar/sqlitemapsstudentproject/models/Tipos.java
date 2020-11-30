@@ -15,15 +15,16 @@ public class Tipos implements Serializable {
 
     @Override
     public String toString() {
-        return "Tipos{" +
-                "google_type='" + google_type + '\'' +
-                ", local_type='" + local_type + '\'' +
-                '}';
+        if(local_type == null) {
+            return "--"+google_type+"--";
+        }
+        return local_type;
+
     }
 
     public Tipos(String google_type) {
         this.google_type = google_type;
-        this.local_type = Locales.getLocale(google_type);
+        this.local_type = Locales.getStaticLocal(google_type);
     }
     public Tipos() {}
 
