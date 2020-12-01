@@ -26,11 +26,13 @@ public class Place implements Serializable {
         JSONArray jsonArray = o.getJSONArray("types");
         List<Tipos> typesOut = new ArrayList<>();
         for (int i = 0; i < jsonArray.length() ; i++) {
-            typesOut.add(new Tipos(jsonArray.getString(i)));
+            Tipos tipo = new Tipos(jsonArray.getString(i));
+            if(tipo.getLocal_type() != null) {
+                typesOut.add(tipo);
+            }
         }
         this.tipos= typesOut.toArray(new Tipos[0]);
         JSONObject jsonObject = o.getJSONObject("geometry").getJSONObject("location");
-        System.out.println(jsonObject);
         lat = jsonObject.getDouble("lat");
         lon = jsonObject.getDouble("lng");
         vecindad = o.getString("vicinity");
@@ -44,6 +46,44 @@ public class Place implements Serializable {
         }
     }
     public Place() {}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Place place = (Place) o;
+
+        if (Double.compare(place.lat, lat) != 0) return false;
+        if (Double.compare(place.lon, lon) != 0) return false;
+        if (!codi.equals(place.codi)) return false;
+        if (!name.equals(place.name)) return false;
+        if (!place_id.equals(place.place_id)) return false;
+        if (vecindad != null ? !vecindad.equals(place.vecindad) : place.vecindad != null)
+            return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(tipos, place.tipos)) return false;
+        if (foto != null ? !foto.equals(place.foto) : place.foto != null) return false;
+        return phone != null ? phone.equals(place.phone) : place.phone == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = codi.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + place_id.hashCode();
+        temp = Double.doubleToLongBits(lat);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(lon);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (vecindad != null ? vecindad.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(tipos);
+        result = 31 * result + (foto != null ? foto.hashCode() : 0);
+        result = 31 * result + (phone != null ? phone.hashCode() : 0);
+        return result;
+    }
 
     public void setCodi(Poblacio codi) {
         this.codi = codi;

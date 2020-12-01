@@ -129,7 +129,7 @@ public class PoblacioDAO implements GenericDAO<Poblacio,Integer> {
     public boolean timeToFetch(Integer codi, String type) {
         Cursor select = db.rawQuery("SELECT time FROM LAST_FETCH_POBLACIONES WHERE codi = ? and google_type = ?",new String[] {codi.toString(),type});
         if(select.moveToNext()) {
-            return select.getLong(1) > (3600 * 24);
+            return select.getLong(0) > (3600 * 24);
         }
         return true;
 
@@ -144,7 +144,7 @@ public class PoblacioDAO implements GenericDAO<Poblacio,Integer> {
         insertStatementdb.bindLong(2,System.currentTimeMillis()/1000);
         insertStatementdb.bindLong(1,codi);
         insertStatementdb.bindString(3,type);
-        deleteStatement.executeInsert();
-
+        deleteStatement.executeUpdateDelete();
+        insertStatementdb.executeInsert();
     }
 }

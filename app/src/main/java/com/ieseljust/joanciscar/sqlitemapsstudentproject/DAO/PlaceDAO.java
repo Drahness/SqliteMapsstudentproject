@@ -17,8 +17,10 @@ import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Place;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Tipos;
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.Locales;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PlaceDAO extends ViewModel implements GenericDAO<Place,String> {
@@ -127,10 +129,10 @@ public class PlaceDAO extends ViewModel implements GenericDAO<Place,String> {
         Place pl = null;
         List<Place> places = new ArrayList<>();
         if(selectAll.moveToNext()) {
-            Cursor selecttipos = db.rawQuery("SELECT * FROM Tipos_Sitios WHERE place_id = "+"'"+selectAll.getString(3)+"'",null);
+            Cursor selecttipos = db.rawQuery("SELECT * FROM Tipos_Sitios WHERE place_id = '"+key+"'",null);
             List<Tipos> tiposList = new ArrayList<>();
             while (selecttipos.moveToNext()) {
-                tiposList.add(new TiposDAO(connexion).getFromCursor(selecttipos));
+                tiposList.add(new TiposDAO(connexion).get(selecttipos.getString(this.getColumnIndex(selecttipos,"google_type"))));
             }
             pl = this.getFromCursor(selectAll);
             pl.setTipos(tiposList.toArray(new Tipos[0]));
@@ -196,6 +198,7 @@ public class PlaceDAO extends ViewModel implements GenericDAO<Place,String> {
         return obj.getPlace_id();
     }
     // TODO REFACTOR THIS
+
     public List<Place> getFor(Poblacio pob,String type) {
         PoblacioDAO dao = new PoblacioDAO(connexion);
         List<Place> places = new ArrayList<>();
@@ -205,16 +208,26 @@ public class PlaceDAO extends ViewModel implements GenericDAO<Place,String> {
             dao.actualizeFetchTime(pob.getCodi(),type);
             worker.addPoblacion(pob,type);
             worker.execute();
-            //while(worker.getStatus() != AsyncTask.Status.FINISHED);
         }
         Cursor select = db.rawQuery("SELECT place_id FROM Sitios WHERE codi = "+pob.getCodi(),null);
         while (select.moveToNext()) {
-            places.add(this.get(select.getString(0)));
-            //places.add(getFromCursor(select));
+            Place p = this.get(select.getString(0));
+            if(p != null &&  Arrays.asList(p.getTipos()).contains(new Tipos(type))) {
+                places.add(p);
+            }
         }
         return places;
     }
     public List<Place> getFor(Poblacio pob,Tipos type) {
         return this.getFor(pob,type.getGoogle_type());
+    }
+
+    public FetchPlacesOf fetchFor(Poblacio pob, Tipos type) {
+        PoblacioDAO dao = new PoblacioDAO(connexion);
+        FetchPlacesOf worker = new FetchPlacesOf(connexion);
+        dao.actualizeFetchTime(pob.getCodi(),type.getGoogle_type());
+        worker.addPoblacion(pob,type.getGoogle_type());
+        worker.execute();
+        return worker;
     }
 }

@@ -29,7 +29,6 @@ public final class GoogleFetcherUtils {
         StringBuilder sb = new StringBuilder();
         while((c = br.readLine()) != null) {
             sb.append(c);
-            System.out.println(c);
         }
         return new JSONObject(sb.toString());
     }

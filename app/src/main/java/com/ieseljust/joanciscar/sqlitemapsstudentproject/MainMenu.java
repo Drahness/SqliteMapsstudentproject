@@ -5,17 +5,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewStub;
 
+import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PlaceDAO;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.PoblacioDAO;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.DAO.TiposDAO;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Poblacio;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.models.Tipos;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.DBController;
 import com.ieseljust.joanciscar.sqlitemapsstudentproject.utils.Locales;
+
+import java.security.Policy;
+import java.util.List;
 
 public abstract class MainMenu extends AppCompatActivity {
     public static String API_KEY;
@@ -35,21 +40,33 @@ public abstract class MainMenu extends AppCompatActivity {
                 public void run() {
                     super.run();
                     locales = Locales.getInstance(MainMenu.this);
+                    PoblacioDAO pobDAO = new PoblacioDAO(new DBController(MainMenu.this));
+                    TiposDAO tiposDAO = new TiposDAO(new DBController(MainMenu.this));
+                    PlaceDAO placeDAO = new PlaceDAO(new DBController(MainMenu.this));
                     if(new DBController(MainMenu.this).firstInit()) {
                         String[] types = MainMenu.this.getResources().getStringArray(R.array.types);
-                        TiposDAO tipos = new TiposDAO(new DBController(MainMenu.this));
                         for (String type : types) {
-                            tipos.safeInsert(new Tipos(type));
+                            tiposDAO.safeInsert(new Tipos(type));
                         }
-                        PoblacioDAO pob = new PoblacioDAO(new DBController(MainMenu.this));
-                        pob.safeInsert(new Poblacio(46712, "Piles", 38.9408685, -0.1324241, 1000));
-                        pob.safeInsert(new Poblacio(46711, "Miramar", 38.9501877, -0.1405837, 1000));
-                        pob.safeInsert(new Poblacio(46713, "Bellreguard", 38.9466531, -0.1624822, 2000));
-                        pob.safeInsert(new Poblacio(46715, "Alqueria de la comtessa", 38.9367938, -0.1509766, 1000));
-                        pob.safeInsert(new Poblacio(46702, "Gandia", 38.96735, -0.1853385, 2000));
-                        pob.safeInsert(new Poblacio(46701, "Grao Gandia", 39.007931, -0.1679302, 2500));
-                        pob.safeInsert(new Poblacio(46740, "Carcaixent", 39.1214619, -0.4479085, 2000));
+                        pobDAO.safeInsert(new Poblacio(46712, "Piles", 38.9408685, -0.1324241, 1000));
+                        pobDAO.safeInsert(new Poblacio(46711, "Miramar", 38.9501877, -0.1405837, 1000));
+                        pobDAO.safeInsert(new Poblacio(46713, "Bellreguard", 38.9466531, -0.1624822, 2000));
+                        pobDAO.safeInsert(new Poblacio(46715, "Alqueria de la comtessa", 38.9367938, -0.1509766, 1000));
+                        pobDAO.safeInsert(new Poblacio(46702, "Gandia", 38.96735, -0.1853385, 2000));
+                        pobDAO.safeInsert(new Poblacio(46701, "Grao Gandia", 39.007931, -0.1679302, 2500));
+                        pobDAO.safeInsert(new Poblacio(46740, "Carcaixent", 39.1214619, -0.4479085, 2000));
                     }
+                    List<Tipos> tipos = tiposDAO.get();
+                    List<Poblacio> poblaciones = pobDAO.get();
+                    for(int i = 0 ; i < poblaciones.size(); i++) {
+                        for (int y = 0 ; y < tipos.size() ; y++) {
+                            if(pobDAO.timeToFetch(poblaciones.get(i).getCodi(),tipos.get(y).getGoogle_type())) {
+                               AsyncTask task = placeDAO.fetchFor(poblaciones.get(i),tipos.get(y));
+                               while(task.getStatus() == AsyncTask.Status.RUNNING);
+                            }
+                        }
+                    }
+
                 }
             };
             t.start();

@@ -23,6 +23,36 @@ public class Poblacio implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Poblacio poblacio = (Poblacio) o;
+
+        if (codi != poblacio.codi) return false;
+        if (Double.compare(poblacio.lat, lat) != 0) return false;
+        if (Double.compare(poblacio.lon, lon) != 0) return false;
+        if (radius != poblacio.radius) return false;
+        if (!nom.equals(poblacio.nom)) return false;
+        return lugares.equals(poblacio.lugares);
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = codi;
+        result = 31 * result + nom.hashCode();
+        temp = Double.doubleToLongBits(lat);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(lon);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + lugares.hashCode();
+        result = 31 * result + radius;
+        return result;
+    }
+
+    @Override
     public String toString() {
         return  nom + ": "+codi + "\nCoords: "+lat+","+lon+"\nRadius:"+radius;
     }

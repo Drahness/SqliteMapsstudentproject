@@ -99,7 +99,10 @@ public class PoblacionMaps extends MainMenu implements OnMapReadyCallback, Googl
         /*LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
          */
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()),13));
+        if(myLocation != null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()),13));
+        }
+
         List<Poblacio> poblaciones = new PoblacioDAO(new DBController(this)).get();
         for (Poblacio pob : poblaciones) {
             LatLng latLng = new LatLng(pob.getLat(),pob.getLon());
